@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023 TheSilkMiner
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.thesilkminer.mc.austin.rt
 
 import groovy.transform.CompileStatic

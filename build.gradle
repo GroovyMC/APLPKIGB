@@ -115,11 +115,8 @@ java {
 }
 
 license {
-    header(project.file('NOTICE'))
-
-    ext['year'] = Calendar.getInstance().get(Calendar.YEAR)
-    ext['name'] = 'TheSilkMiner'
-    ext['app'] = 'APLP: KIGB'
+    header = project.file('LICENSE-header.txt')
+    ext['year'] = Calendar.instance.get(Calendar.YEAR)
 }
 
 minecraft {
@@ -244,7 +241,7 @@ shadowJar {
             'LICENSE-junit.txt',
             'META-INF/LICENSE.txt',
             'META-INF/LICENSE.md',
-            'META-INF/NOTICE.txt',
+            'META-INF/LICENSE-header.txt',
             '**/*.kotlin-module',
             '**/*.psd'
     ].each { exclude it }
