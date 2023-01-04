@@ -5,6 +5,7 @@
 
 package net.thesilkminer.mc.austin.mojotest
 
+import groovy.transform.CompileStatic
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import net.thesilkminer.mc.austin.api.EventBus
@@ -13,6 +14,7 @@ import net.thesilkminer.mc.austin.api.Mojo
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+@CompileStatic
 @Mojo('mojotest')
 class AustinPowerfulMojoTest {
     private static final Logger LOGGER = LogManager.getLogger(AustinPowerfulMojoTest)
@@ -28,6 +30,9 @@ class AustinPowerfulMojoTest {
         LOGGER.info('Say hello to my meta-class {}', this.metaClass)
         //LOGGER.info('Buses are mojo "{}" and Forge "{}"', mojoBus, forgeBus)
         LOGGER.info('Grabbing event buses leads to {} and {}', this.grabbedMojoBus, this.grabbedForgeBus)
-        this.grabbedMojoBus.register({ FMLClientSetupEvent event -> LOGGER.info('Successfully received client event {} on mojoBus', event) })
+        this.grabbedMojoBus.addListener { FMLClientSetupEvent event ->
+            LOGGER.info('Successfully received client event {} on mojoBus using @CompileStatic addListener', event)
+            LOGGER.info SV(GroovySystem.version)
+        }
     }
 }

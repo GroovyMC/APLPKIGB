@@ -5,6 +5,7 @@
 
 package net.thesilkminer.mc.austin.mojotest
 
+import groovy.transform.CompileStatic
 import net.minecraft.client.Minecraft
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -27,5 +28,12 @@ class AustinPowerfulMojoSubsTest {
     static void onStaticCommon(final FMLCommonSetupEvent event) {
         LOGGER.info('Successfully received static event {} on mojoBus', event)
         LOGGER.info "username: ${Minecraft.instance.user.name}"
+    }
+
+    @CompileStatic
+    @SubscribeEvent
+    static void onStaticCommonCompileStatic(final FMLCommonSetupEvent event) {
+        LOGGER.info('Successfully received static event {} on mojoBus using CompileStatic', event)
+        LOGGER.info "compilestatic username: ${Minecraft.instance.user.name}"
     }
 }
