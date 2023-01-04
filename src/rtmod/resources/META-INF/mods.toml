@@ -12,7 +12,7 @@ description = "The Grooviest language provider in Forge!"
 [[dependencies.austin]]
 modId = "forge"
 mandatory = true
-versionRange = "[41,)"
+versionRange = "[41.0.110,)"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.austin]]

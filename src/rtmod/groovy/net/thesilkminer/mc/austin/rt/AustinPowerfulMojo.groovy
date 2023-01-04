@@ -24,9 +24,13 @@
 
 package net.thesilkminer.mc.austin.rt
 
+import groovy.transform.CompileStatic
+import groovy.transform.stc.POJO
 import net.thesilkminer.mc.austin.api.Mojo
 
-@Mojo("austin")
+@POJO
+@CompileStatic
+@Mojo('austin')
 class AustinPowerfulMojo {
     AustinPowerfulMojo() {}
 }

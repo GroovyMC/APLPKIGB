@@ -55,7 +55,7 @@ final class JarInJarLocatorVisitor extends SimpleFileVisitor<Path> {
     }
 
     static Predicate<SecureJar> manifest(final Predicate<Manifest> manifestVerifier) {
-        return it -> manifestVerifier.test(it.getManifest());
+        return it -> manifestVerifier.test(it.moduleDataProvider().getManifest());
     }
 
     @Override

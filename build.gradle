@@ -195,7 +195,7 @@ repositories {
 }
 
 dependencies {
-    minecraft group: 'net.minecraftforge', name: 'forge', version: "${mcVersion}-41.0.38"
+    minecraft group: 'net.minecraftforge', name: 'forge', version: "${mcVersion}-41.0.110"
     shade groovy('stdlib')
     shade groovy('ant')
     shade groovy('astbuilder')
@@ -435,6 +435,6 @@ testJar.dependsOn('reobfAllJar')
 build.dependsOn('testJar')
 
 wrapper {
-    gradleVersion = '7.4'
+    gradleVersion = '7.4.2'
     distributionType = Wrapper.DistributionType.ALL
 }
