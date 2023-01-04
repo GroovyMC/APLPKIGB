@@ -5,6 +5,7 @@
 
 package net.thesilkminer.mc.austin.mojotest
 
+import net.minecraft.client.Minecraft
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.thesilkminer.mc.austin.api.EventBus
@@ -25,5 +26,6 @@ class AustinPowerfulMojoSubsTest {
     @SubscribeEvent
     static void onStaticCommon(final FMLCommonSetupEvent event) {
         LOGGER.info('Successfully received static event {} on mojoBus', event)
+        LOGGER.info "username: ${Minecraft.instance.user.name}"
     }
 }
