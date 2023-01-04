@@ -13,7 +13,6 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContex
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 import shadow.org.codehaus.plexus.util.IOUtil
-import groovy.lang.Closure
 
 class UpdatedGroovyExtensionModuleTransformer implements Transformer {
 
@@ -97,10 +96,10 @@ static String getGitCommit() {
     return proc.exitValue()? "ERROR(${proc.exitValue()})" : proc.text.trim()
 }
 
-def groovy(def name) {
+final Map<String, String> groovy(final String name) {
     return [
             group: 'org.apache.groovy',
-            name: name == 'stdlib'? 'groovy' : "groovy-${name}",
+            name: name == 'stdlib' ? 'groovy' : "groovy-${name}",
             version: project.ext.groovyVersion
     ]
 }
@@ -110,7 +109,7 @@ group = 'net.thesilkminer.mc.austin'
 archivesBaseName = 'austin-powerful-language-provider-keeping-it-groovy-baby'
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(JavaVersion.VERSION_17.majorVersion)
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
     withSourcesJar()
 }
 
@@ -123,9 +122,8 @@ minecraft {
     mappings channel: 'official', version: '1.18.2'
 
     runs {
-        client {
-            workingDirectory project.file('run_client')
-
+        configureEach {
+            workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
 
             lazyToken('minecraft_classpath') {
@@ -142,26 +140,8 @@ minecraft {
             }
         }
 
-        server {
-            workingDirectory project.file('run_server')
-
-            property 'forge.logging.console.level', 'debug'
-
-            args 'nogui'
-
-            lazyToken('minecraft_classpath') {
-                configurations.shade.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
-            }
-
-            mods {
-                austinspowerfullanguageproviderkeepingitgroovybaby {
-                    source sourceSets.main
-                }
-                mojotest {
-                    source sourceSets.test
-                }
-            }
-        }
+        client { args '--username', 'Dev##' }
+        server { args '--nogui' }
     }
 }
 
@@ -176,90 +156,83 @@ repositories {
 }
 
 dependencies {
-    minecraft group: 'net.minecraftforge', name: 'forge', version: "${mcVersion}-40.0.5"
-    shade groovy('stdlib')
-    shade groovy('ant')
-    shade groovy('astbuilder')
-    yeet groovy('backports-compat-23')
-    yeet groovy('binary')
-    yeet groovy('bom')
-    yeet groovy('bsf')
-    shade groovy('cli-picocli')
-    yeet groovy('cli-commons')
-    shade groovy('contracts')
-    yeet groovy('console')
-    shade groovy('datetime')
-    shade groovy('dateutil')
-    yeet groovy('docgenerator')
-    shade groovy('ginq')
-    yeet groovy('groovydoc')
-    yeet groovy('groovysh')
-    yeet groovy('jaxb')
-    yeet groovy('jmx')
-    shade groovy('json')
-    shade groovy('jsr223')
-    shade groovy('macro')
-    shade groovy('macro-library')
-    shade groovy('nio')
-    yeet groovy('servlet')
-    yeet groovy('sql')
-    yeet groovy('swing')
-    shade groovy('templates')
-    shade groovy('test')
-    shade groovy('test-junit5')
-    yeet groovy('testng')
-    shade groovy('toml')
-    shade groovy('typecheckers')
-    shade groovy('xml')
-    shade groovy('yaml')
+    minecraft group: 'net.minecraftforge', name: 'forge', version: "1.18.2-40.2.0"
+
+    final Map<String, List<String>> groovyLibs = [
+            shade: [
+                    'stdlib', 'ant', 'astbuilder', 'cli-picocli',
+                    'contracts', 'datetime', 'dateutil', 'ginq',
+                    'json', 'jsr223', 'macro', 'macro-library',
+                    'nio', 'templates', 'test', 'test-junit5',
+                    'toml', 'typecheckers', 'xml', 'yaml'
+            ],
+            yeet: [
+                    'backports-compat-23', 'binary', 'bom', 'bsf',
+                    'cli-commons', 'console', 'docgenerator', 'groovydoc',
+                    'groovysh', 'jaxb', 'jmx', 'servlet',
+                    'sql', 'swing', 'testing'
+            ]
+    ]
+    groovyLibs.shade.each { final String dep -> shade groovy(dep) }
+    groovyLibs.yeet.each { final String dep -> yeet groovy(dep) }
 }
 
-jar {
-    archiveClassifier = ''
+tasks.named('jar', Jar).configure {
+    archiveClassifier.set('')
     manifest {
         attributes([
-            "Specification-Title": "austins-powerful-language-provider-keeping-it-groovy-baby",
-            "Specification-Vendor": "TheSilkMiner",
-            "Specification-Version": "1",
-            "Implementation-Title": project.name,
-            "Implementation-Version": archiveVersion.get(),
-            "Implementation-Vendor" : "TheSilkMiner",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-            "GitCommit": getGitCommit(),
-            "FMLModType": "LANGPROVIDER",
-            "Automatic-Module-Name": "net.thesilkminer.mc.aplpkigb"
+            'Specification-Title': 'austins-powerful-language-provider-keeping-it-groovy-baby',
+            'Specification-Vendor': 'TheSilkMiner',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': archiveVersion.get(),
+            'Implementation-Vendor' : 'TheSilkMiner',
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'GitCommit': getGitCommit(),
+            'FMLModType': 'LANGPROVIDER',
+            'Automatic-Module-Name': 'net.thesilkminer.mc.aplpkigb'
         ])
     }
+
+    finalizedBy 'reobfJar'
 }
 
 shadowJar {
-    archiveClassifier = 'all'
+    archiveClassifier.set('all')
     configurations = [project.configurations.shade]
+
     [
             '**/module-info.class',
-            'LICENSE.txt',
-            'LICENSE-junit.txt',
-            'META-INF/LICENSE.txt',
-            'META-INF/LICENSE.md',
-            'META-INF/LICENSE-header.txt',
+            'LICENSE.txt', 'LICENSE-junit.txt',
+            'META-INF/LICENSE.txt', 'META-INF/LICENSE.md', 'META-INF/LICENSE-header.txt',
             '**/*.kotlin-module',
             '**/*.psd'
-    ].each { exclude it }
+    ].each { exclude(it) }
+
     transform(UpdatedGroovyExtensionModuleTransformer)
     mergeServiceFiles()
+
+    finalizedBy 'reobfShadowJar'
+    dependsOn 'reobfJar'
 }
 
-task testJar(type: Jar) {
+tasks.register('testJar', Jar) {
+    archiveClassifier.set('test')
     from sourceSets.test.output
-    archiveClassifier = 'test'
+    finalizedBy 'reobfTestJar'
+    dependsOn 'shadowJar'
+}
+
+tasks.named('build').configure {
+    dependsOn 'testJar'
 }
 
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        register('mavenJava', MavenPublication) {
             from components.java
             artifacts = [jar, sourcesJar, shadowJar]
-            artifactId = "aplp-${mcVersion}"
+            artifactId = 'aplp-1.18.2'
             pom.withXml { node ->
                 node.asNode().dependencies
                         .'*'
@@ -281,22 +254,10 @@ reobf {
 }
 
 tasks.withType(GroovyCompile).configureEach {
+    groovyOptions.encoding = 'UTF-8'
     groovyOptions.optimizationOptions.indy = true
 }
 
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
-}
-
-jar.finalizedBy('reobfJar')
-shadowJar.finalizedBy('reobfShadowJar')
-testJar.finalizedBy('reobfTestJar')
-
-shadowJar.dependsOn('reobfJar')
-testJar.dependsOn('shadowJar')
-build.dependsOn('testJar')
-
-wrapper {
-    gradleVersion = '7.4'
-    distributionType = Wrapper.DistributionType.ALL
 }
