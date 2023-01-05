@@ -19,8 +19,9 @@ import java.lang.annotation.Target
  * the value of {@link Mojo#value()} must also exist in the {@code mods.toml} file. The constructor of the class will
  * automatically be called when appropriate by APLP.</p>
  *
- * <p>Annotating a class with this annotation also implicitly adds two properties (namely {@code forgeBus} and
- * {@code mojoBus}) to the class, allowing users to reference the Forge and Mojo bus for event subscribing.</p>
+ * <p>Annotating a class with this annotation also implicitly adds three properties (namely {@code forgeBus},
+ * {@code modBus} and {@code mojoBus}) to the class, allowing users to reference the Forge and Mojo bus for event
+ * subscribing.</p>
  *
  * <p>An example of a simple class using this annotation is:</p>
  *

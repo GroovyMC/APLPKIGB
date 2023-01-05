@@ -152,6 +152,10 @@ configurations {
 }
 
 repositories {
+    maven {
+        name = 'Modding Inquisition Releases'
+        url = 'https://maven.moddinginquisition.org/releases'
+    }
     mavenCentral()
 }
 
@@ -175,6 +179,8 @@ dependencies {
     ]
     groovyLibs.shade.each { final String dep -> shade groovy(dep) }
     groovyLibs.yeet.each { final String dep -> yeet groovy(dep) }
+
+    compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.2.0'
 }
 
 tasks.named('jar', Jar).configure {
