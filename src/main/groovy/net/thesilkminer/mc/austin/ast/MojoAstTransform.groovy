@@ -11,7 +11,6 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.IEventBus
 import net.thesilkminer.mc.austin.MojoContainer
 import net.thesilkminer.mc.austin.api.EventBus
-import net.thesilkminer.mc.austin.api.GrabEventBus
 import net.thesilkminer.mc.austin.api.Mod
 import net.thesilkminer.mc.austin.api.Mojo
 import org.codehaus.groovy.ast.ASTNode
@@ -76,7 +75,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
     }
 
     private static void fixConstructor(final ClassNode node) {
-        final ConstructorNode noArgConstructor = node.declaredConstructors.find {it.parameters.size() == 0 }
+        final ConstructorNode noArgConstructor = node.declaredConstructors.find {it.parameters.size() === 0 }
         node.declaredConstructors.remove(noArgConstructor)
         node.addConstructor(generateNewConstructor(node, noArgConstructor))
     }

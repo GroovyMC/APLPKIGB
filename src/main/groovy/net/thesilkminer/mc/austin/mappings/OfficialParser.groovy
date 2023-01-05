@@ -32,7 +32,7 @@ class OfficialParser implements Closeable {
 
     private void parseLine(String line) {
         var found = line.split(' ').findAll {it.length()!=0}
-        if (found.size() == 0) return // Filter out any empty lines
+        if (found.isEmpty()) return // Filter out any empty lines
         if (found[-1].endsWith(':')) {
             String obf = found[-1].substring(0,found[-1].length()-1)
             String official = found[0]

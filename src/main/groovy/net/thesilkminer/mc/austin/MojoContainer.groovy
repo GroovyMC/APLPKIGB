@@ -54,7 +54,7 @@ final class MojoContainer extends ModContainer {
         this.contextExtension = { null } // Oh yes, lambdas...
 
         try {
-            def module = layer.findModule(info.owningFile.moduleName()).orElseThrow()
+            final module = layer.findModule(info.owningFile.moduleName()).orElseThrow()
             this.mojoClass = Class.forName(module, className)
             LOGGER.trace(Logging.LOADING, 'Loaded class {} on class loader {}: time to get Groovy', this.mojoClass.name, this.mojoClass.classLoader)
         } catch (final Throwable t) {
@@ -95,7 +95,7 @@ final class MojoContainer extends ModContainer {
     private void createMojo() {
         try {
             LOGGER.trace(Logging.LOADING, 'Loading mojo class {} for {}', this.mojoClass.name, this.modId)
-            def mojoConstructor = this.mojoClass.getConstructor(MojoContainer)
+            final mojoConstructor = this.mojoClass.getConstructor(MojoContainer)
             this.mojo = mojoConstructor.newInstance(this)
             LOGGER.trace(Logging.LOADING, 'Successfully loaded mojo {}', this.modId)
         } catch (final Throwable t) {

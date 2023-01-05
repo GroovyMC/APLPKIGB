@@ -34,7 +34,7 @@ final class EventMetaFactory {
             final Class<?> maybeGenericType,
             final Class<T> eventTypeReference,
             final methodPointerOwner, final methodPointerName,
-            @ClosureParams(value = FromString, options = "T") final Closure<?> subscriber
+            @ClosureParams(value = FromString, options = 'T') final Closure<?> subscriber
     ) {
         if (maybeBus !instanceof IEventBus) {
             originalCall()

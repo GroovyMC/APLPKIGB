@@ -51,7 +51,6 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
     private static final ClassNode SUBSCRIBE_EVENT = ClassHelper.make(SubscribeEvent)
     private static final ClassNode VOID = ClassHelper.make(void)
 
-    private static final String EVENT_BUS = 'EVENT_BUS'
     @SuppressWarnings('SpellCheckingInspection')
     private static final String GENERATED_METHOD_NAME_BEGINNING = '$$aplp$synthetic$registerSubscribers'
     private static final String MOJO_CONTAINER_PARAMETER_NAME = '$$mojoContainer$$'
@@ -71,15 +70,15 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
         final AnnotatedNode target = nodes[1] as AnnotatedNode
 
         if (annotation.classNode != TARGET_ANNOTATION) return
-        if (!(target instanceof ClassNode)) return
-
-        this.doVisit(annotation, target as ClassNode, source)
+        if (target instanceof ClassNode) {
+            this.doVisit(annotation, target, source)
+        }
     }
 
     private void doVisit(final AnnotationNode annotation, final ClassNode clazz, final SourceUnit unit) {
         final EventBus bus = findBusFromAnnotation(annotation)
 
-        if (bus == null) {
+        if (bus === null) {
             this.addError('Unable to identify bus from EventBusSubscriber annotation', annotation)
             return
         }
@@ -172,7 +171,7 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
         final Statement syntheticCode = generateMethodCode(needsStatic, needsVirtual, bus, node)
         final Parameter[] parameters = GeneralUtils.params(GeneralUtils.param(MOJO_CONTAINER, MOJO_CONTAINER_PARAMETER_NAME))
         final String name = "${GENERATED_METHOD_NAME_BEGINNING}__${bus.toString()}\$\$"
-        final MethodNode syntheticMethod = node.addSyntheticMethod(name, 25, VOID, parameters, new ClassNode[0], syntheticCode)
+        final MethodNode syntheticMethod = node.addSyntheticMethod(name, 25, VOID, parameters, ClassNode.EMPTY_ARRAY, syntheticCode)
         syntheticMethod.addAnnotation(new AnnotationNode(GENERATED))
     }
 
@@ -193,7 +192,7 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
 
     private static Expression expressionFromBus(final EventBus bus) {
         return switch (bus) {
-            case EventBus.FORGE -> GeneralUtils.propX(GeneralUtils.classX(MINECRAFT_FORGE), EVENT_BUS)
+            case EventBus.FORGE -> GeneralUtils.propX(GeneralUtils.classX(MINECRAFT_FORGE), 'EVENT_BUS')
             case EventBus.MOJO, EventBus.MOD -> GeneralUtils.propX(GeneralUtils.varX(MOJO_CONTAINER_PARAMETER_NAME, MOJO_CONTAINER), MOJO_BUS)
         }
     }

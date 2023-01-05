@@ -70,13 +70,9 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     private static final ClassNode EVENT_PRIORITY = ClassHelper.make(EventPriority)
     private static final ClassNode NULL_OBJECT = ClassHelper.make(NullObject)
 
-    private static final String CANCELED = 'canceled'
     private static final String CONSUMER = 'consumer'
-    private static final String FILTER = 'filter'
-    private static final String PRIORITY = 'priority'
-    private static final String TYPE = 'type'
 
-    // the index into the list is made up like ((isGeneric? 8 : 0) | count)
+    // the index into the list is made up like ((isGeneric ? 8 : 0) | count)
     private static final List<Map<String, Integer>> ELEMENTS_TO_EXTRACT = [
             null,
             [ consumer : 0 ],
@@ -109,13 +105,13 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private void doVisit(final ModuleNode node) {
-        if (node == null) return
+        if (node === null) return
 
         node.classes.each(this.&doVisit)
     }
 
     private void doVisit(final ClassNode node) {
-        if (node == null) return
+        if (node === null) return
 
         node.declaredConstructors.each(this.&doVisit)
         node.methods.each(this.&doVisit)
@@ -124,7 +120,7 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private void doVisit(final MethodNode node) {
-        if (node == null) return
+        if (node === null) return
 
         this.currentMethod = node
         this.doVisit(node.code)
@@ -132,13 +128,13 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private void doVisit(final FieldNode node) {
-        if (node == null) return
+        if (node === null) return
 
         this.doVisit(node.initialExpression)
     }
 
     private void doVisit(final Statement statement) {
-        if (statement == null) return
+        if (statement === null) return
 
         switch (statement) {
             case BlockStatement -> (statement as BlockStatement).statements.each(this.&doVisit)
@@ -176,7 +172,7 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private void doVisit(final Expression expression) {
-        if (expression == null) return
+        if (expression === null) return
 
         switch (expression) {
             case BitwiseNegationExpression -> this.doVisit((expression as BitwiseNegationExpression).expression)
@@ -258,15 +254,15 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
 
     private static boolean shouldTargetMethodTransformation(final String name, final TupleExpression arguments) {
         if (name != 'addListener' && name != 'addGenericListener') return false
-        final isGeneric = name == 'addGenericListener'
+        final boolean isGeneric = name == 'addGenericListener'
 
         final int argumentSize = arguments.size()
-        final int minSize = isGeneric? 2 : 1
-        final int maxSize = isGeneric? 5 : 4
+        final int minSize = isGeneric ? 2 : 1
+        final int maxSize = isGeneric ? 5 : 4
         if (argumentSize < minSize || argumentSize > maxSize) return false
 
         final Expression last = arguments.last()
-        if (!(last instanceof ClosureExpression) && !(last instanceof MethodPointerExpression)) return false
+        if (last !instanceof ClosureExpression && last !instanceof MethodPointerExpression) return false
 
         return true
     }
@@ -310,15 +306,15 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private static Expression getPriorityExpression(final TupleExpression arguments, final int count, final boolean isGeneric) {
-        GeneralUtils.asX(EVENT_PRIORITY, extractMethodParameter(arguments, count, PRIORITY, isGeneric) ?: makeNullObjectExpression())
+        GeneralUtils.asX(EVENT_PRIORITY, extractMethodParameter(arguments, count, 'priority', isGeneric) ?: makeNullObjectExpression())
     }
 
     private static Expression getCanceledExpression(final TupleExpression arguments, final int count, final boolean isGeneric) {
-        GeneralUtils.asX(ClassHelper.Boolean_TYPE, extractMethodParameter(arguments, count, CANCELED, isGeneric) ?: makeNullObjectExpression())
+        GeneralUtils.asX(ClassHelper.Boolean_TYPE, extractMethodParameter(arguments, count, 'canceled', isGeneric) ?: makeNullObjectExpression())
     }
 
     private static Expression getGenericType(final TupleExpression arguments, final int count, final boolean isGeneric) {
-        asClass(extractMethodParameter(arguments, count, FILTER, isGeneric) ?: makeNullObjectExpression())
+        asClass(extractMethodParameter(arguments, count, 'filter', isGeneric) ?: makeNullObjectExpression())
     }
 
     private static Expression getClosure(final TupleExpression arguments, final int count, final boolean isGeneric) {
@@ -326,7 +322,7 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
     }
 
     private tryExtractEventType(final TupleExpression arguments, final int count, final boolean isGeneric) {
-        final explicitType = extractMethodParameter(arguments, count, TYPE, isGeneric)
+        final explicitType = extractMethodParameter(arguments, count, 'type', isGeneric)
         if (explicitType) {
             return asClass(explicitType)
         }
@@ -357,7 +353,7 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
 
     private Expression tryExtractEventType(final ClosureExpression closure) {
         final target = this.extractTypeFrom(closure)
-        target == null? null : GeneralUtils.classX(this.extractTypeFrom(closure))
+        target === null ? null : GeneralUtils.classX(this.extractTypeFrom(closure))
     }
 
     private Class<?> extractTypeFrom(final ClosureExpression closure) {
@@ -380,7 +376,7 @@ final class AddListenerAstTransform implements ASTTransformation, ErrorCollectin
 
     private static Expression extractMethodParameter(final TupleExpression arguments, final int count, final String name, final boolean isGeneric) {
         final Integer targetExpression = ELEMENTS_TO_EXTRACT[(isGeneric? 8 : 0) | count][name]
-        targetExpression == null? null : arguments.getExpression(targetExpression)
+        targetExpression === null ? null : arguments.getExpression(targetExpression)
     }
 
     private static Expression asClass(final Expression expression) {
