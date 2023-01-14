@@ -164,14 +164,14 @@ dependencies {
 
     final Map<String, List<String>> groovyLibs = [
             shade: [
-                    'stdlib', 'ant', 'astbuilder', 'cli-picocli',
+                    'stdlib', 'astbuilder', 'cli-picocli',
                     'contracts', 'datetime', 'dateutil', 'ginq',
                     'json', 'jsr223', 'macro', 'macro-library',
                     'nio', 'templates', 'test', 'test-junit5',
                     'toml', 'typecheckers', 'xml', 'yaml'
             ],
             yeet: [
-                    'backports-compat-23', 'binary', 'bom', 'bsf',
+                    'ant', 'backports-compat-23', 'binary', 'bom', 'bsf',
                     'cli-commons', 'console', 'docgenerator', 'groovydoc',
                     'groovysh', 'jaxb', 'jmx', 'servlet',
                     'sql', 'swing', 'testing'

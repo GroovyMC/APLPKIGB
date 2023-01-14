@@ -35,27 +35,22 @@ version="1.0.0"
 
 The main mod class should have a no-arg constructor and be annotated with either
 `@Mojo` (suggested) or `@Mod` with its mod ID installed. Access to the mod and Forge
-buses is provided respectively through the `mojoBus` and `forgeBus` properties or
-through the `@GrabEventBus` annotation:
+buses is provided respectively through the `mojoBus` and `forgeBus` properties:
 
 ```groovy
 @Mojo("mymojo")
 class MyMojo {
-    @GrabEventBus(EventBus.FORGE)
-    private final IEventBus grabbedForgeBus
-    
     MyMojo() {
         LogManager.getLogger(MyMod).info('Hello from Groovy-land!')
         mojoBus.register(ModBusEventHandler)
         forgeBus.register(ForgeBusEventHandler)
-        assert grabbedForgeBus === forgeBus
     }
 }
 ```
 
 ### Groovy Version
 
-The Groovy version provided by this language provider is: **4.0.1**.
+The Groovy version provided by this language provider is: **4.0.7**.
 
 Only actual releases will be supported by this language provider, not release candidates.
 Moreover, once a version of Forge is deemed to be production-ready (i.e. a Recommended
@@ -69,7 +64,6 @@ whole set of Groovy modules, but should still suffice for both common and some m
 particular use cases.
 
 - **Standard Library**: The essential bits to allow Groovy to work.
-- **Ant**: A Groovy interface to Apache Ant, for dependency management.
 - **AST Builder**: Captures AST builders from code statements.
 - **Contracts**: Allows specification of invariants, pre-, and post-conditions.
 - **Date-Time**: Groovy extensions for the Java Date-Time library.
@@ -94,6 +88,9 @@ particular use cases.
 Some modules have been dropped from this language provider due to various reasons. They
 are listed in the following text.
 
+- **Ant**: This module is not needed in a Minecraft environment, as ForgeGradle already
+  provides a dependency management system.
+  - Removed in version x 
 - **Binary**: Batch files to call Groovy programs are not required.
 - **BOM**: Useful only for development.
 - **BSF**: Not available.
