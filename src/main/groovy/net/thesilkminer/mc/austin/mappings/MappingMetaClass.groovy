@@ -24,9 +24,6 @@ class MappingMetaClass extends DelegatingMetaClass {
 
     MappingMetaClass(MetaClass delegate, LoadedMappings mappings) {
         super(delegate)
-        Map<String, String> fields = new HashMap<>()
-        Map<String, List<String>> methods = new HashMap<>()
-
         this.fieldMap = getFields(mappings, theClass)
         this.methodMap = getMethods(mappings, theClass)
     }
@@ -45,10 +42,10 @@ class MappingMetaClass extends DelegatingMetaClass {
     protected static Map<String, List<String>> getMethods(LoadedMappings mappings, Class clazz) {
         if (clazz==null)
             return Map.of()
-        var methods = mappings.methods.getOrDefault(clazz.name, new HashMap<>())
-        methods += getMethods(mappings, clazz.superclass)
+        final methods = mappings.methods.getOrDefault(clazz.name, new HashMap<>())
+        methods.putAll(getMethods(mappings, clazz.superclass))
         for (Class aClass : clazz.interfaces) {
-            methods += getMethods(mappings, aClass)
+            methods.putAll(getMethods(mappings, aClass))
         }
         return methods
     }
@@ -64,15 +61,13 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.invokeStaticMethod(object, methodName, arguments)
         } catch (MissingMethodException e) {
-            if (this.methodMap!==null) {
-                // Check whether the method is in the mappables
-                // If it is, map it and invoke that method
-                List<String> mapped = this.methodMap.get(methodName)
-                if (mapped!==null) for (String possible : mapped) {
-                    try {
-                        return super.invokeStaticMethod(object, possible, arguments)
-                    } catch (MissingMethodException ignored) {}
-                }
+            // Check whether the method is in the mappables
+            // If it is, map it and invoke that method
+            List<String> mapped = this.methodMap.get(methodName)
+            if (mapped !== null) for (final possible in mapped) {
+                try {
+                    return super.invokeStaticMethod(object, possible, arguments)
+                } catch (MissingMethodException ignored) {}
             }
             throw e
         }
@@ -83,15 +78,13 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.invokeMethod(object, methodName, arguments)
         } catch (MissingMethodException e) {
-            if (this.methodMap!==null) {
-                // Check whether the method is in the mappables
-                // If it is, map it and invoke that method
-                List<String> mapped = this.methodMap[methodName]
-                if (mapped!==null) for (String possible : mapped) {
-                    try {
-                        return super.invokeMethod(object, possible, arguments)
-                    } catch (MissingMethodException ignored) {}
-                }
+            // Check whether the method is in the mappables
+            // If it is, map it and invoke that method
+            List<String> mapped = this.methodMap[methodName]
+            if (mapped !== null) for (final possible in mapped) {
+                try {
+                    return super.invokeMethod(object, possible, arguments)
+                } catch (MissingMethodException ignored) {}
             }
             throw e
         }
@@ -102,15 +95,13 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.invokeMethod(object, methodName, arguments)
         } catch (MissingMethodException e) {
-            if (this.methodMap!==null) {
-                // Check whether the method is in the mappables
-                // If it is, map it and invoke that method
-                List<String> mapped = this.methodMap[methodName]
-                if (mapped!==null) for (String possible : mapped) {
-                    try {
-                        return super.invokeMethod(object, possible, arguments)
-                    } catch (MissingMethodException ignored) {}
-                }
+            // Check whether the method is in the mappables
+            // If it is, map it and invoke that method
+            List<String> mapped = this.methodMap[methodName]
+            if (mapped !== null) for (final possible in mapped) {
+                try {
+                    return super.invokeMethod(object, possible, arguments)
+                } catch (MissingMethodException ignored) {}
             }
             throw e
         }
@@ -121,15 +112,13 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.invokeMethod(name, args)
         } catch (MissingMethodException e) {
-            if (this.methodMap!==null) {
-                // Check whether the method is in the mappables
-                // If it is, map it and invoke that method
-                List<String> mapped = this.methodMap[name]
-                if (mapped!==null) for (String possible : mapped) {
-                    try {
-                        return super.invokeMethod(possible, args)
-                    } catch (MissingMethodException ignored) {}
-                }
+            // Check whether the method is in the mappables
+            // If it is, map it and invoke that method
+            List<String> mapped = this.methodMap[name]
+            if (mapped !== null) for (final possible in mapped) {
+                try {
+                    return super.invokeMethod(possible, args)
+                } catch (MissingMethodException ignored) {}
             }
             throw e
         }
@@ -140,15 +129,13 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.invokeMethod(sender, receiver, methodName, arguments, isCallToSuper, fromInsideClass)
         } catch (MissingMethodException e) {
-            if (this.methodMap!==null) {
-                // Check whether the method is in the mappables
-                // If it is, map it and invoke that method
-                List<String> mapped = this.methodMap[methodName]
-                if (mapped!==null) for (String possible : mapped) {
-                    try {
-                        return super.invokeMethod(sender, receiver, methodName, arguments, isCallToSuper, fromInsideClass)
-                    } catch (MissingMethodException ignored) {}
-                }
+            // Check whether the method is in the mappables
+            // If it is, map it and invoke that method
+            List<String> mapped = this.methodMap[methodName]
+            if (mapped !== null) for (final possible in mapped) {
+                try {
+                    return super.invokeMethod(sender, receiver, possible, arguments, isCallToSuper, fromInsideClass)
+                } catch (MissingMethodException ignored) {}
             }
             throw e
         }
@@ -159,11 +146,11 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             super.setProperty(sender, receiver, messageName, messageValue, useSuper, fromInsideClass)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[messageName]
-                if (mapped!==null) super.setProperty(sender, receiver, mapped, messageValue, useSuper, fromInsideClass)
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[messageName]
+            if (mapped !== null) {
+                super.setProperty(sender, receiver, mapped, messageValue, useSuper, fromInsideClass)
                 return
             }
             throw e
@@ -175,11 +162,11 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             super.setProperty(object, property, newValue)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[property]
-                if (mapped!==null) super.setProperty(object, mapped, newValue)
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[property]
+            if (mapped !== null) {
+                super.setProperty(object, mapped, newValue)
                 return
             }
             throw e
@@ -191,11 +178,11 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             super.setProperty(propertyName, newValue)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[propertyName]
-                if (mapped!==null) super.setProperty(mapped, newValue)
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[propertyName]
+            if (mapped !== null) {
+                super.setProperty(mapped, newValue)
                 return
             }
             throw e
@@ -207,12 +194,10 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.getProperty(sender, receiver, messageName, useSuper, fromInsideClass)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[messageName]
-                if (mapped!==null) return super.getProperty(sender,receiver,mapped,useSuper,fromInsideClass)
-            }
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[messageName]
+            if (mapped !== null) return super.getProperty(sender,receiver,mapped,useSuper,fromInsideClass)
             throw e
         }
     }
@@ -222,12 +207,10 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.getProperty(propertyName)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[propertyName]
-                if (mapped!==null) return super.getProperty(mapped)
-            }
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[propertyName]
+            if (mapped !== null) return super.getProperty(mapped)
             throw e
         }
     }
@@ -236,13 +219,11 @@ class MappingMetaClass extends DelegatingMetaClass {
     Object getProperty(Object object, String property) {
         try {
             return super.getProperty(object, property)
-        } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[property]
-                if (mapped!==null) return super.getProperty(object, mapped)
-            }
+        }   catch (MissingPropertyException e) {
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[property]
+            if (mapped !== null) return super.getProperty(object, mapped)
             throw e
         }
     }
@@ -252,12 +233,10 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.getAttribute(object, attribute)
         } catch (MissingPropertyException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[attribute]
-                if (mapped!==null) return super.getAttribute(object, mapped)
-            }
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[attribute]
+            if (mapped !== null) return super.getAttribute(object, mapped)
             throw e
         }
     }
@@ -267,12 +246,10 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             return super.getAttribute(sender, receiver, messageName, useSuper)
         } catch (MissingFieldException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[messageName]
-                if (mapped!==null) return super.getAttribute(sender, receiver, mapped, useSuper)
-            }
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[messageName]
+            if (mapped !== null) return super.getAttribute(sender, receiver, mapped, useSuper)
             throw e
         }
     }
@@ -282,11 +259,11 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             super.setAttribute(object, attribute, newValue)
         } catch (MissingFieldException e) {
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[attribute]
-                if (mapped!==null) super.setAttribute(object, mapped, newValue)
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[attribute]
+            if (mapped !== null) {
+                super.setAttribute(object, mapped, newValue)
                 return
             }
             throw e
@@ -298,14 +275,10 @@ class MappingMetaClass extends DelegatingMetaClass {
         try {
             super.setAttribute(sender, receiver, messageName, messageValue, useSuper, fromInsideClass)
         } catch (MissingFieldException e) {
-
-            if (this.fieldMap!==null) {
-                // Check whether the field is in the mappables
-                // If it is, map it and invoke that method
-                String mapped = this.fieldMap[messageName]
-                if (mapped!==null) super.setAttribute(sender, receiver, mapped, messageValue, useSuper, fromInsideClass)
-                return
-            }
+            // Check whether the field is in the mappables
+            // If it is, map it and invoke that method
+            String mapped = this.fieldMap[messageName]
+            if (mapped !== null) super.setAttribute(sender, receiver, mapped, messageValue, useSuper, fromInsideClass)
             throw e
         }
     }
@@ -375,8 +348,7 @@ class MappingMetaClass extends DelegatingMetaClass {
         MetaMethod old = super.getMetaMethod(name, args)
         if (old !== null) return old
 
-        List<String> methods = this.methodMap[name]
-        if (methods===null) methods = []
+        List<String> methods = this.methodMap.getOrDefault(name, [])
 
         return methods.stream().map(it->super.getMetaMethod(it, args))
                 .filter(it->it!==null).findFirst().orElse(null)
@@ -413,8 +385,7 @@ class MappingMetaClass extends DelegatingMetaClass {
         MetaMethod old = super.getStaticMetaMethod(name, args)
         if (old !== null) return old
 
-        List<String> methods = this.methodMap[name]
-        if (methods===null) methods = []
+        List<String> methods = this.methodMap.getOrDefault(name, [])
 
         return methods.stream().map(it->super.getStaticMetaMethod(it, args))
                 .filter(it->it!==null).findFirst().orElse(null)
@@ -425,8 +396,7 @@ class MappingMetaClass extends DelegatingMetaClass {
         MetaMethod old = super.getStaticMetaMethod(name, argTypes)
         if (old !== null) return old
 
-        List<String> methods = this.methodMap[name]
-        if (methods===null) methods = []
+        List<String> methods = this.methodMap.getOrDefault(name, [])
 
         return methods.stream().map(it->super.getStaticMetaMethod(it, argTypes))
                 .filter(it->it!==null).findFirst().orElse(null)

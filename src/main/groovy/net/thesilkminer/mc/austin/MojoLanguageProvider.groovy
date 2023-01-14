@@ -8,6 +8,7 @@ package net.thesilkminer.mc.austin
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import net.minecraftforge.fml.Logging
+import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.forgespi.language.ILifecycleEvent
 import net.minecraftforge.forgespi.language.IModLanguageProvider
 import net.minecraftforge.forgespi.language.ModFileScanData
@@ -21,22 +22,21 @@ import java.util.function.Supplier
 
 @CompileStatic
 final class MojoLanguageProvider implements IModLanguageProvider {
-    @SuppressWarnings('SpellCheckingInspection') private static final String NAME = 'aplp'
-    @SuppressWarnings('SpellCheckingInspection') private static final String MOD_DESC = 'Lnet/thesilkminer/mc/austin/api/Mod;'
-    @SuppressWarnings('SpellCheckingInspection') private static final String MOJO_DESC = 'Lnet/thesilkminer/mc/austin/api/Mojo;'
-
     private static final Logger LOGGER = LogManager.getLogger(MojoLanguageProvider)
-    private static final Type MOD_ANNOTATION = Type.getType(MOD_DESC)
-    private static final Type MOJO_ANNOTATION = Type.getType(MOJO_DESC)
+    private static final Type MOD_ANNOTATION = Type.getType('Lnet/thesilkminer/mc/austin/api/Mod;')
+    private static final Type MOJO_ANNOTATION = Type.getType('Lnet/thesilkminer/mc/austin/api/Mojo;')
 
     MojoLanguageProvider() {
-        MappingsProvider.INSTANCE.startMappingsSetup()
+        if (FMLEnvironment.production) {
+            // Only load mappings in prod
+            MappingsProvider.INSTANCE.startMappingsSetup()
+        }
         LOGGER.info('Successfully initialized Mojo Language Provider on name {}', this.name())
     }
 
     @Override
     String name() {
-        NAME
+        return 'aplp'
     }
 
     @CompileDynamic

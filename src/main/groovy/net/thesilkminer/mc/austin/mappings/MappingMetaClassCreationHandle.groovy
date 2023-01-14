@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap
 @CompileStatic
 class MappingMetaClassCreationHandle extends MetaClassRegistry.MetaClassCreationHandle {
 
-    private static final String GROOVY_SYSTEM = "groovy.lang.GroovySystem"
+    private static final String GROOVY_SYSTEM = 'groovy.lang.GroovySystem'
 
     final LoadedMappings mappings
 
@@ -36,25 +36,26 @@ class MappingMetaClassCreationHandle extends MetaClassRegistry.MetaClassCreation
         return null
     }
 
-    private shouldWrap(Class clazz) {
-        if (clazz==null)
+    private boolean shouldWrap(Class clazz) {
+        if (clazz === null)
             return false
-        if (mappings.mappable.contains(clazz.name))
+        if (mappings.getMappable().contains(clazz.getName()))
             return true
-        if (shouldWrap(clazz.superclass))
+        if (shouldWrap(clazz.getSuperclass()))
             return true
-        for (Class aClass : clazz.interfaces) {
+        for (Class aClass : clazz.getInterfaces()) {
             if (shouldWrap(aClass))
                 return true
         }
+        return false
     }
 
     static synchronized applyCreationHandle(LoadedMappings mappings, ClassLoader loader) {
         if (!hasWrapped) {
             Class groovySystem = Class.forName(GROOVY_SYSTEM, true, loader)
-            MetaClassRegistry registry = groovySystem.getMethod("getMetaClassRegistry").invoke(null) as MetaClassRegistry
+            MetaClassRegistry registry = groovySystem.getMethod('getMetaClassRegistry').invoke(null) as MetaClassRegistry
 
-            if (mappings === null) throw new IllegalArgumentException("Found uninitialized runtime mappings!")
+            if (mappings === null) throw new IllegalArgumentException('Found uninitialized runtime mappings!')
             hasWrapped = true
             var instance = new MappingMetaClassCreationHandle(mappings)
             registry.metaClassCreationHandle = instance
@@ -67,7 +68,7 @@ class MappingMetaClassCreationHandle extends MetaClassRegistry.MetaClassCreation
                             queue[it.theClass] = wrapped
                     }
                 }
-                queue.forEach {clazz, metaClazz ->
+                queue.forEach { clazz, metaClazz ->
                     registry.setMetaClass(clazz, metaClazz)
                 }
             }
