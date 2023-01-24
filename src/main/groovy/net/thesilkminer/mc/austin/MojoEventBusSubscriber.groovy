@@ -81,7 +81,7 @@ final class MojoEventBusSubscriber {
     @CompileDynamic
     private static Set<Dist> distributions(final AnnotationData data) {
         final List<ModAnnotation.EnumHolder> declaredHolders = data.annotationData().dist as List<ModAnnotation.EnumHolder>
-        final List<ModAnnotation.EnumHolder> holders = declaredHolders ?: (this.&makeDefaultDistributionHolders)()
+        final List<ModAnnotation.EnumHolder> holders = declaredHolders ?: makeDefaultDistributionHolders()
         holders.collect { Dist.valueOf(it.value) }.toSet()
     }
 

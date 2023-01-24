@@ -7,6 +7,7 @@ package net.thesilkminer.mc.austin.mojotest
 
 import groovy.transform.CompileStatic
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.thesilkminer.mc.austin.api.BaseMojo
 import net.thesilkminer.mc.austin.api.Mojo
 import org.apache.logging.log4j.LogManager
@@ -24,5 +25,10 @@ class AustinPowerfulMojoTest implements BaseMojo {
             LOGGER.info('Successfully received client event {} on mojoBus using @CompileStatic addListener', event)
             LOGGER.info SV(GroovySystem.version)
         }
+        this.modBus.addListener(this.&methodBorrowing) // note: needs to be `this.&methodName` - not `this::methodName`
+    }
+
+    private static void methodBorrowing(final FMLCommonSetupEvent event) {
+        LOGGER.info "Successfully received $event on mojoBus using method borrowing"
     }
 }

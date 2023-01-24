@@ -1,0 +1,3 @@
+moduleName=aplp-extensions
+moduleVersion=1.0.0
+extensionClasses=net.thesilkminer.mc.austin.extensions.EventBusExtensions
