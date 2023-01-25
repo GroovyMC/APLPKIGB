@@ -10,7 +10,7 @@ package net.thesilkminer.mc.austin.api
  *
  * @since 1.0.0
  */
-enum EventBus {
+final enum EventBus {
     /**
      * The Mojo bus, where main mojo lifecycle events are posted.
      *

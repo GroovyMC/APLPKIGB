@@ -97,7 +97,7 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
 
     private static EventBus findBusFromAnnotation(final AnnotationNode node) {
         final Expression busExpression = node.getMember('bus')
-        if (!(busExpression instanceof PropertyExpression)) return null
+        if (busExpression !instanceof PropertyExpression) return null
 
         final PropertyExpression expression = busExpression as PropertyExpression
         final Expression target = expression.objectExpression
@@ -107,8 +107,8 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
     }
 
     private static EventBus findBusFromExpressions(final Expression target, final Expression property) {
-        if (!(target instanceof ClassExpression)) return null
-        if (!(property instanceof ConstantExpression)) return null
+        if (target !instanceof ClassExpression) return null
+        if (property !instanceof ConstantExpression) return null
 
         final ClassExpression probablyBusEnum = target as ClassExpression
         if (probablyBusEnum.type != BUS_ENUM) return null
@@ -135,9 +135,9 @@ final class EventBusSubscriberAstTransform extends AbstractASTTransformation imp
             valid = false
         }
 
-        final Parameter event = parameters.size() < 1? null : parameters[0]
+        final Parameter event = parameters.size() < 1 ? null : parameters[0]
         //noinspection GroovyUnusedAssignment
-        final GroovyClassLoader loader = this.unit != null? this.unit.classLoader : unit.classLoader
+        final GroovyClassLoader loader = this.unit != null ? this.unit.classLoader : unit.classLoader
         if (event != null && !this.verifyEventParameterValidity(event, bus)) {
             valid = false
         }

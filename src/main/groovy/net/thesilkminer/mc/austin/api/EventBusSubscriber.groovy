@@ -7,6 +7,7 @@ package net.thesilkminer.mc.austin.api
 
 import net.minecraftforge.api.distmarker.Dist
 import org.codehaus.groovy.transform.GroovyASTTransformationClass
+import org.jetbrains.annotations.Nullable
 
 import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
@@ -54,11 +55,14 @@ import java.lang.annotation.Target
      *
      * <p>The method is named {@code modId} instead of {@code mojoId} simply to ease usage and adoption.</p>
      *
+     * <p>If blank, APLP will attempt to infer the modId for you. If it fails to infer, the event subscriber will not
+     * be loaded.</p>
+     *
      * @return The ID of the mojo that owns this event subscriber.
      *
      * @since 1.0.0
      */
-    String modId()
+    String modId() default ''
 
     /**
      * The event bus to which the subscriber should be subscribed to.
@@ -83,4 +87,19 @@ import java.lang.annotation.Target
      * @since 1.0.0
      */
     Dist[] dist() default [Dist.CLIENT, Dist.DEDICATED_SERVER]
+
+    /**
+     * The environments on which this event subscriber should be loaded.
+     *
+     * <p>If the environment does not match any of the specified ones, the event subscriber will not be loaded. This
+     * allows the annotation to act as a class-loading barrier.</p>
+     *
+     * <p>By default, the event subscriber loads on all known environments. Empty values are allowed, but are
+     * effectively useless.</p>
+     *
+     * @return The environments on which this event subscriber should be loaded.
+     *
+     * @since 1.1.0
+     */
+    Environment[] environment() default [Environment.DEV, Environment.PRODUCTION]
 }

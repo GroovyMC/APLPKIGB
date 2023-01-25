@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2023 TheSilkMiner
+ * SPDX-License-Identifier: MIT
+ */
+
 package net.thesilkminer.mc.austin.extensions
 
 import groovy.transform.CompileStatic
@@ -18,7 +23,7 @@ class EventBusExtensions {
                                               final EventPriority priority = EventPriority.NORMAL,
                                               final boolean receiveCancelled = false,
                                               @ClosureParams(value = FromAbstractTypeMethods, options = 'net.minecraftforge.eventbus.api.Event') final Closure<?> closure) {
-        if (closure.parameterTypes.size() === 0 || closure.parameterTypes[0] === Object)
+        if (closure.parameterTypes.size() !== 1 || closure.parameterTypes[0] === Object)
             throw new IllegalArgumentException('Closure must have one explicitly typed parameter. For example: modBus.addListener { FMLCommonSetupEvent event -> ... }')
 
         final Class<T> eventClass = closure.parameterTypes[0] as Class<T>

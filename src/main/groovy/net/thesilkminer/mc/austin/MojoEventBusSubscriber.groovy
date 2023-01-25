@@ -5,7 +5,7 @@
 
 package net.thesilkminer.mc.austin
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import groovy.transform.MapConstructor
 import groovy.transform.PackageScope
@@ -17,6 +17,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation
 import net.minecraftforge.forgespi.language.ModFileScanData
 import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData
+import net.thesilkminer.mc.austin.api.Environment
 import net.thesilkminer.mc.austin.api.EventBus
 import net.thesilkminer.mc.austin.api.EventBusSubscriber
 import org.apache.logging.log4j.LogManager
@@ -50,12 +51,13 @@ final class MojoEventBusSubscriber {
 
     private void subscribe(final AnnotationData data) {
         final String mojoId = data.annotationData().modId as String
-        if (mojoId != this.mojoContainer.modId) return
+        if (mojoId !== null && !mojoId.isEmpty() && mojoId != this.mojoContainer.modId) return
 
         final EventBus bus = bus(data)
-        final Set<Dist> distributions = distributions(data)
+        final Set<Dist> distributions = enumValues(data, 'dist', Dist)
+        final Set<Environment> environments = enumValues(data, 'environment', Environment)
 
-        if (FMLEnvironment.dist in distributions) {
+        if (FMLEnvironment.dist in distributions && Environment.current in environments) {
             this.doSubscribe(bus, distributions, data.clazz())
         }
     }
@@ -75,17 +77,17 @@ final class MojoEventBusSubscriber {
 
     private static EventBus bus(final AnnotationData data) {
         final ModAnnotation.EnumHolder holder = data.annotationData().bus as ModAnnotation.EnumHolder
-        EventBus.valueOf(holder.value)
+        return EventBus.valueOf(holder.value)
     }
 
-    @CompileDynamic
-    private static Set<Dist> distributions(final AnnotationData data) {
-        final List<ModAnnotation.EnumHolder> declaredHolders = data.annotationData().dist as List<ModAnnotation.EnumHolder>
-        final List<ModAnnotation.EnumHolder> holders = declaredHolders ?: makeDefaultDistributionHolders()
-        holders.collect { Dist.valueOf(it.value) }.toSet()
+    private static <T extends Enum<T>> Set<T> enumValues(final AnnotationData data, final String name, final Class<T> enumClass) {
+        final List<ModAnnotation.EnumHolder> declaredHolders = data.annotationData()[name] as List<ModAnnotation.EnumHolder>
+        final List<ModAnnotation.EnumHolder> holders = declaredHolders ?: makeDefaultEnumHolders(enumClass)
+
+        return holders.collect { Enum.valueOf(enumClass, it.value) }.toSet()
     }
 
-    private static List<ModAnnotation.EnumHolder> makeDefaultDistributionHolders() {
-        Dist.values().collect { new ModAnnotation.EnumHolder(null, it.name()) }
+    private static <T extends Enum<T>> List<ModAnnotation.EnumHolder> makeDefaultEnumHolders(final Class<T> enumClass) {
+        return List.of(enumClass.enumConstants).collect { new ModAnnotation.EnumHolder(null, it.name()) }
     }
 }

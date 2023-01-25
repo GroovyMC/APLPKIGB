@@ -7,14 +7,16 @@ package net.thesilkminer.mc.austin.mojotest
 
 import groovy.transform.CompileStatic
 import net.minecraft.client.Minecraft
+import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.thesilkminer.mc.austin.api.Environment
 import net.thesilkminer.mc.austin.api.EventBus
 import net.thesilkminer.mc.austin.api.EventBusSubscriber
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-@EventBusSubscriber(modId = 'mojotest', bus = EventBus.MOJO)
+@EventBusSubscriber(bus = EventBus.MOJO, dist = Dist.CLIENT)
 class AustinPowerfulMojoSubsTest {
     private static final Logger LOGGER = LogManager.getLogger(AustinPowerfulMojoSubsTest)
 

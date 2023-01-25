@@ -10,6 +10,7 @@ plugins {
 
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipOutputStream
 import shadow.org.codehaus.plexus.util.IOUtil
@@ -93,7 +94,7 @@ class UpdatedGroovyExtensionModuleTransformer implements Transformer {
 static String getGitCommit() {
     def proc = 'git rev-parse --short HEAD'.execute()
     proc.waitFor()
-    return proc.exitValue()? "ERROR(${proc.exitValue()})" : proc.text.trim()
+    return proc.exitValue() ? "ERROR(${proc.exitValue()})" : proc.text.trim()
 }
 
 final Map<String, String> groovy(final String name) {
@@ -203,17 +204,14 @@ tasks.named('jar', Jar).configure {
     finalizedBy 'reobfJar'
 }
 
-shadowJar {
+tasks.named('shadowJar', ShadowJar).configure {
     archiveClassifier.set('all')
     configurations = [project.configurations.shade]
 
-    [
-            '**/module-info.class',
+    exclude '**/module-info.class',
             'LICENSE.txt', 'LICENSE-junit.txt',
             'META-INF/LICENSE.txt', 'META-INF/LICENSE.md', 'META-INF/LICENSE-header.txt',
-            '**/*.kotlin-module',
             '**/*.psd'
-    ].each { exclude(it) }
 
     transform(UpdatedGroovyExtensionModuleTransformer)
     mergeServiceFiles()
