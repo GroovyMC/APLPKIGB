@@ -65,7 +65,7 @@ final class MojoContainer extends ModContainer {
 
     @Override
     boolean matches(final Object mod) {
-        return mod != null && mod.is(this.mojo)
+        return mod !== null && mod.is(this.mojo)
     }
 
     @Override
@@ -87,7 +87,7 @@ final class MojoContainer extends ModContainer {
 
     private void constructMojo() {
         this.createMojo()
-        if (this.scanData != null) {
+        if (this.scanData !== null) {
             this.injectEventListeners()
         }
     }

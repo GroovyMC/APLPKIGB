@@ -12,16 +12,13 @@ package net.thesilkminer.mc.austin.api
  */
 final enum EventBus {
     /**
-     * The Mojo bus, where main mojo lifecycle events are posted.
+     * The Mojo bus, where main mojo lifecycle events are posted. This is the same as {@link EventBus#MOD}.
      *
      * @since 1.0.0
      */
     MOJO,
     /**
      * The Mojo bus, where main mojo lifecycle events are posted.
-     *
-     * <p>It is <strong>highly suggested</strong> to use {@link #MOJO} instead. This field is provided only to ease
-     * adoption.</p>
      *
      * @since 1.0.0
      */

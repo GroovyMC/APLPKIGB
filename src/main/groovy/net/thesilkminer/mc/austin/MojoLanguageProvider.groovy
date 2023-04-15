@@ -5,7 +5,6 @@
 
 package net.thesilkminer.mc.austin
 
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import net.minecraftforge.fml.Logging
 import net.minecraftforge.fml.loading.FMLEnvironment
@@ -39,10 +38,9 @@ final class MojoLanguageProvider implements IModLanguageProvider {
         return 'aplp'
     }
 
-    @CompileDynamic
     @Override
     Consumer<ModFileScanData> getFileVisitor() {
-        return { scanData ->
+        return { ModFileScanData scanData ->
             final Map<String, MojoLanguageLoader> mojos = scanData.annotations
                     .findAll { it.annotationType() == MOD_ANNOTATION || it.annotationType() == MOJO_ANNOTATION }
                     .collect { new MojoLanguageLoader(className: it.clazz().className, mojoId: it.annotationData()['value']) }

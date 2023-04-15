@@ -2,21 +2,24 @@
 
 The Grooviest language provider in Forgeland
 
+[![APLP version](https://img.shields.io/badge/dynamic/xml?label=Latest%20APLP%20version&query=metadata//latest&url=https://maven.moddinginquisition.org/releases/net/thesilkminer/mc/austin/aplp-1.18.2/maven-metadata.xml)](https://maven.moddinginquisition.org/#/releases/net/thesilkminer/mc/austin/aplp-1.18.2)
+
 ## How to use
+The [1.18.2 branch of the GroovyMDK](https://github.com/GroovyMC/GroovyMDK/tree/1.18.2) is an example mod that uses this language provider.
+
 To use this language provider, simply add it as a dependency in your build script. The
 language provider is available on Jared's maven, so you can simply add the following
-to your build script, replacing `${mcver}` with the Minecraft version you are targeting
-and `${version}` with the version of APLP you want to use:
+to your build script, replacing `${aplpVersion}` with the version of APLP you want to use:
 ```groovy
 repositories {
     maven {
-        name 'BlameJared'
-        url = 'https://maven.blamejared.com'
+        name 'Modding Inquisition Releases'
+        url = 'https://maven.moddinginquisition.org/releases'
     }
 }
 dependencies {
-    compileOnly group: 'net.thesilkminer.mc.austin', name: "aplp-${mcver}", version: "${version}"
-    runtimeOnly group: 'net.thesilkminer.mc.austin', name: "aplp-${mcver}", version: "${version}", classifier: 'all'
+    compileOnly "net.thesilkminer.mc.austin:aplp-1.18.2:${aplpVersion}"
+    runtimeOnly "net.thesilkminer.mc.austin:aplp-1.18.2:${aplpVersion}:all"
 }
 ```
 
@@ -33,16 +36,30 @@ modId="mymojo"
 version="1.0.0"
 ```
 
+A bare-bones [mods.groovy](https://github.com/GroovyMC/ModsDotGroovy) example:
+```groovy
+ModsDotGroovy.make {
+    modLoader = 'aplp'
+    loaderVersion = '[1,)'
+    license = 'All Rights Reserved'
+  
+    mod {
+        modId = 'mymojo'
+        version = '1.0.0'
+    }
+}
+```
+
 The main mod class should have a no-arg constructor and be annotated with either
 `@Mojo` (suggested) or `@Mod` with its mod ID installed. Access to the mod and Forge
-buses is provided respectively through the `mojoBus` and `forgeBus` properties:
+buses is provided respectively through the `modBus` and `forgeBus` properties:
 
 ```groovy
 @Mojo("mymojo")
 class MyMojo {
     MyMojo() {
         LogManager.getLogger(MyMod).info('Hello from Groovy-land!')
-        mojoBus.register(ModBusEventHandler)
+        modBus.register(ModBusEventHandler)
         forgeBus.register(ForgeBusEventHandler)
     }
 }

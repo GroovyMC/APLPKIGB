@@ -8,7 +8,7 @@ showAsResourcePack=false
 modId="mojotest"
 version="1.1.0"
 displayName="Austin's Powerful Language Provider: Keeping It Groovy Baby"
-authors="TheSilkMiner"
+authors="TheSilkMiner, Paint_Ninja"
 description='''
 Not that it matters, since this will not be packaged into the JAR anyway
 '''

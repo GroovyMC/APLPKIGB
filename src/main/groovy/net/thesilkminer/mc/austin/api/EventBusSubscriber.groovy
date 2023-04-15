@@ -35,7 +35,7 @@ import java.lang.annotation.Target
  * <p>A simple example of usage of this annotation is in the text that follows:</p>
  *
  * <pre>
- * {@literal @}EventBusSubscriber(modId = 'mymojo', bus = EventBus.MOJO)
+ * {@literal @}EventBusSubscriber(modId = 'mymojo', bus = EventBus.MOD)
  * class MySubscriber {
  *     {@literal @}SubscribeEvent
  *     void onCommonSetup(final FMLCommonSetupEvent e) {}
