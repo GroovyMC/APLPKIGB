@@ -11,6 +11,7 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.eventbus.api.IEventBus
 import net.thesilkminer.mc.austin.MojoContainer
 import net.thesilkminer.mc.austin.api.EventBus
+import net.thesilkminer.mc.austin.api.GMod
 import net.thesilkminer.mc.austin.api.Mod
 import net.thesilkminer.mc.austin.api.Mojo
 import org.codehaus.groovy.ast.ASTNode
@@ -39,6 +40,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
 
     private static final ClassNode TARGET_ANNOTATION = ClassHelper.make(Mojo)
     private static final ClassNode ALTERNATIVE_TARGET_ANNOTATION = ClassHelper.make(Mod)
+    private static final ClassNode ALTERNATIVE_TARGET_ANNOTATION_2 = ClassHelper.make(GMod)
 
     private static final AnnotationNode GENERATED_ANNOTATION_NODE = new AnnotationNode(ClassHelper.make(Generated))
 
@@ -59,7 +61,9 @@ final class MojoAstTransform extends AbstractASTTransformation {
         final AnnotationNode annotation = nodes[0] as AnnotationNode
         final AnnotatedNode node = nodes[1] as AnnotatedNode
 
-        if (annotation.classNode != TARGET_ANNOTATION && annotation.classNode != ALTERNATIVE_TARGET_ANNOTATION) return
+        if (annotation.classNode !in [TARGET_ANNOTATION, ALTERNATIVE_TARGET_ANNOTATION, ALTERNATIVE_TARGET_ANNOTATION_2])
+            return
+
         if (node instanceof ClassNode) {
             generateMethods(node)
         }

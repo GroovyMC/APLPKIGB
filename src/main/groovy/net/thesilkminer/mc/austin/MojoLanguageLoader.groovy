@@ -44,7 +44,7 @@ final class MojoLanguageLoader implements IModLanguageProvider.IModLanguageLoade
     <T> T loadMod(final IModInfo info, final ModFileScanData modFileScanResults, final ModuleLayer layer) {
         // cpw and his love for over-complicated stuff
         // oh well, let's have neat class-loader separation
-        def threadLoader = Thread.currentThread().getContextClassLoader()
+        final ClassLoader threadLoader = Thread.currentThread().getContextClassLoader()
 
         if (FMLEnvironment.production) {
             // Only load this while in production; no need to cause potentially unexpected behavior in dev.
@@ -68,9 +68,6 @@ final class MojoLanguageLoader implements IModLanguageProvider.IModLanguageLoade
 
         try {
             def mojoContainer = Class.forName(MOJO_CONTAINER, true, threadLoader)
-            if (mojoContainer.classLoader != threadLoader) {
-                LOGGER.error(Logging.LOADING, 'Attempting to load MojoContainer from classloader {} actually resulted in {}', threadLoader, mojoContainer.classLoader)
-            }
             def mojoConstructor = mojoContainer.getConstructor(IModInfo, String, ModFileScanData, ModuleLayer)
             mojoConstructor.newInstance(info, this.className, modFileScanResults, layer) as T
         } catch (final InvocationTargetException e) {

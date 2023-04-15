@@ -92,7 +92,7 @@ class UpdatedGroovyExtensionModuleTransformer implements Transformer {
 }
 
 static String getGitCommit() {
-    def proc = 'git rev-parse --short HEAD'.execute()
+    final proc = 'git rev-parse --short HEAD'.execute()
     proc.waitFor()
     return proc.exitValue() ? "ERROR(${proc.exitValue()})" : proc.text.trim()
 }
@@ -105,7 +105,7 @@ final Map<String, String> groovy(final String name) {
     ]
 }
 
-version = '1.0.1'
+version = '1.1.0'
 group = 'net.thesilkminer.mc.austin'
 archivesBaseName = 'austin-powerful-language-provider-keeping-it-groovy-baby'
 
@@ -161,7 +161,7 @@ repositories {
 }
 
 dependencies {
-    minecraft group: 'net.minecraftforge', name: 'forge', version: "1.18.2-40.2.0"
+    minecraft group: 'net.minecraftforge', name: 'forge', version: '1.18.2-40.2.0'
 
     final Map<String, List<String>> groovyLibs = [
             shade: [
@@ -260,8 +260,15 @@ reobf {
 tasks.withType(GroovyCompile).configureEach {
     groovyOptions.encoding = 'UTF-8'
     groovyOptions.optimizationOptions.indy = true
+    options.incremental = true
 }
 
 tasks.withType(GenerateModuleMetadata).configureEach {
     enabled = false
+}
+
+// APLP is written in pure Groovy, so delete the empty java folder in each of the sourceSets
+sourceSets.each { sourceSet ->
+    final javaDir = file("src/${sourceSet.name}/java/")
+    javaDir.deleteDir()
 }

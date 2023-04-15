@@ -25,9 +25,9 @@ import java.util.function.Consumer
 
 @CompileStatic
 final class MojoContainer extends ModContainer {
-    @SuppressWarnings('SpellCheckingInspection') private static final String CLASS_ERROR = 'fml.modloading.failedtoloadmodclass'
-    @SuppressWarnings('SpellCheckingInspection') private static final String MOD_ERROR = 'fml.modloading.failedtoloadmod'
-    @SuppressWarnings('SpellCheckingInspection') private static final String EVENT_ERROR = 'fml.modloading.errorduringevent'
+    private static final String CLASS_ERROR = 'fml.modloading.failedtoloadmodclass'
+    private static final String MOD_ERROR = 'fml.modloading.failedtoloadmod'
+    private static final String EVENT_ERROR = 'fml.modloading.errorduringevent'
 
     private static final Logger LOGGER = LogManager.getLogger(MojoContainer)
 

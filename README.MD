@@ -50,7 +50,7 @@ class MyMojo {
 
 ### Groovy Version
 
-The Groovy version provided by this language provider is: **4.0.7**.
+The Groovy version provided by this language provider is: **4.0.11**.
 
 Only actual releases will be supported by this language provider, not release candidates.
 Moreover, once a version of Forge is deemed to be production-ready (i.e. a Recommended
@@ -90,7 +90,7 @@ are listed in the following text.
 
 - **Ant**: This module is not needed in a Minecraft environment, as ForgeGradle already
   provides a dependency management system.
-  - Removed in version x 
+  - Removed in version 1.1.0
 - **Binary**: Batch files to call Groovy programs are not required.
 - **BOM**: Useful only for development.
 - **BSF**: Not available.
