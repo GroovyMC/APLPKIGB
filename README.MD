@@ -5,7 +5,8 @@ The Grooviest language provider in Forgeland
 [![APLP version](https://img.shields.io/badge/dynamic/xml?label=Latest%20APLP%20version&query=metadata//latest&url=https://maven.moddinginquisition.org/releases/net/thesilkminer/mc/austin/aplp-1.18.2/maven-metadata.xml)](https://maven.moddinginquisition.org/#/releases/net/thesilkminer/mc/austin/aplp-1.18.2)
 
 ## How to use
-The [1.18.2 branch of the GroovyMDK](https://github.com/GroovyMC/GroovyMDK/tree/1.18.2) is an example mod that uses this language provider.
+The recommended way to get started is to use the [1.18.2 branch of the GroovyMDK](https://github.com/GroovyMC/GroovyMDK/tree/1.18.2).
+It contains everything you need to get started with Groovy modding in Minecraft 1.18.2. Alternatively, follow the steps below.
 
 To use this language provider, simply add it as a dependency in your build script. The
 language provider is available on Jared's maven, so you can simply add the following
@@ -57,10 +58,64 @@ buses is provided respectively through the `modBus` and `forgeBus` properties:
 ```groovy
 @Mojo("mymojo")
 class MyMojo {
+    private static final Logger LOGGER = LogManager.getLogger(MyMojo) // setup a logger
+  
     MyMojo() {
-        LogManager.getLogger(MyMod).info('Hello from Groovy-land!')
+        LOGGER.info('Hello from Groovy-land!')
+
+        // register an FMLCommonSetupEvent listener with shorthand syntax
+        modBus.onCommonSetup {
+            LOGGER.info('Common setup!')
+        }
+      
+        // register an FMLClientSetupEvent listener with typed param closure syntax
+        if (FMLEnvironment.dist.isClient()) {
+            modBus.addListener { FMLClientSetupEvent event ->
+                LOGGER.info('Client setup!')
+            }
+        }
+      
+        // register event handler classes or use APLP's @EventBusSubscriber
         modBus.register(ModBusEventHandler)
         forgeBus.register(ForgeBusEventHandler)
+    }
+}
+```
+
+The `modBus` and `forgeBus` properties are added to your mod class at compile-time by the `@Mojo`/`@Mod`/`@GMod` annotation.
+For IDE support, either install the [EnhancedGroovy](https://plugins.jetbrains.com/plugin/19844-enhancedgroovy) plugin
+or implement `BaseMojo` or `BaseMod` in your mod class, like so:
+
+```groovy
+@Mojo("mymojo")
+final class MyMojo implements BaseMojo {
+    // ...
+}
+```
+
+APLP also provides its own enhanced `@EventBusSubscriber` annotation. It works similar to Forge's, except it's more
+forgiving about method signatures (doesn't require static), doesn't require the mod ID to be specified, has a shorter
+syntax and even supports registering event handlers only in certain environments (handy for dev-only testing event
+handlers):
+
+```groovy
+import net.thesilkminer.mc.austin.api.EventBusSubscriber
+import net.thesilkminer.mc.austin.api.EventBus
+import net.thesilkminer.mc.austin.api.Environment
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.eventbus.api.SubscribeEvent
+
+// only subscribes event listeners if the mod is loaded in a development environment
+@EventBusSubscriber(bus = EventBus.MOD, dist = Dist.CLIENT, environment = Environment.DEV) // mod ID is optional
+final class ModBusEventHandler {
+    @SubscribeEvent
+    void onCommonSetup(final FMLCommonSetupEvent event) { // static is preferred, but not required
+      
+    }
+  
+    @SubscribeEvent
+    static void onClientSetup(final FMLClientSetupEvent event) {
+        
     }
 }
 ```
@@ -88,13 +143,11 @@ particular use cases.
 - **GINQ**: LINQ-style collection querying interfaces.
 - **JSON**: Read and write JSON with a Groovy-like interface.
 - **JSR223**: Allows usage of GroovyScript in the Java Scripting Engine.
-- **JUnit 5 Test**: Testing framework; useful in general or in scripting scenarios.
 - **Macro**: Supports the usage of Groovy Macros.
 - **Macro Library**: Additional Macro extensions.
 - **NIO**: Extension methods to allow for NIO usage in a Groovy-like fashion.
 - **PicoCLI**: Allows for compact CLI interfaces.
 - **Templates**: Basic templating usage with a set of engines.
-- **Test**: Testing framework; useful in general or in scripting scenarios.
 - **TOML**: Read and write TOML with a Groovy-like interface.
 - **Type Checkers**: Allows verification of regex.
 - **XML**: Read and write XML with a Groovy-like interface.
@@ -119,9 +172,13 @@ are listed in the following text.
 - **GroovySH**: Interactive execution of Groovy is outside the scope of this LP.
 - **JAXB**: Mainly used for Enterprise Development.
 - **JMX**: Profiling tools, hardly useful in production.
+- **JUnit 5 Test**
+  - Removed in version 1.2.0
 - **Servlet**: HTML web servers as MC mods?
 - **SQL**: Interacting with a SQL database is extremely rare.
 - **Swing**: Swing cannot be used in MC without major issues.
+- **Test**
+  - Removed in 1.2.0 
 - **TestNG**: Not used as much as JUnit.
 
 If you disagree with any of these reasons, please reach out to discuss.

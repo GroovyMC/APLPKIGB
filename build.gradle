@@ -175,14 +175,13 @@ dependencies {
                     'stdlib', 'astbuilder', 'cli-picocli',
                     'contracts', 'datetime', 'dateutil', 'ginq',
                     'json', 'jsr223', 'macro', 'macro-library',
-                    'nio', 'templates', 'test', 'test-junit5',
-                    'toml', 'typecheckers', 'xml', 'yaml'
+                    'nio', 'templates', 'toml', 'typecheckers', 'xml', 'yaml',
             ],
             yeet: [
                     'ant', 'backports-compat-23', 'binary', 'bom', 'bsf',
                     'cli-commons', 'console', 'docgenerator', 'groovydoc',
-                    'groovysh', 'jaxb', 'jmx', 'servlet',
-                    'sql', 'swing', 'testing'
+                    'groovysh', 'jaxb', 'jmx', 'servlet', 'sql', 'swing',
+                    'testing', 'test', 'test-junit5',
             ]
     ]
     groovyLibs.shade.each { final String dep -> shade groovy(dep) }
