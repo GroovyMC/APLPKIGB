@@ -85,7 +85,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
     }
 
     private static ConstructorNode generateNewConstructor(final ClassNode owner, final ConstructorNode previous) {
-        final int modifiers = previous.modifiers | 0x1000
+        final int modifiers = previous.modifiers //| 0x1000 // ACC_SYNTHETIC
         final Parameter[] parameters = [new Parameter(MOJO_CONTAINER, MOJO_CONTAINER_NAME)]
         final Statement code = GeneralUtils.block(
                 GeneralUtils.assignS(GeneralUtils.thisPropX(false, MOJO_CONTAINER_NAME), GeneralUtils.varX(MOJO_CONTAINER_NAME)),
@@ -106,7 +106,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
     private static void generateContainerField(final ClassNode owner) {
         if (owner.getDeclaredField(MOJO_CONTAINER_NAME)) return
 
-        final FieldNode node = owner.addField(MOJO_CONTAINER_NAME, 0x112, MOJO_CONTAINER, null)
+        final FieldNode node = owner.addField(MOJO_CONTAINER_NAME, 0x112 | 0x1000, MOJO_CONTAINER, null)
         node.addAnnotation(GENERATED_ANNOTATION_NODE)
     }
 
