@@ -14,6 +14,7 @@ import net.thesilkminer.mc.austin.api.EventBus
 import net.thesilkminer.mc.austin.api.GMod
 import net.thesilkminer.mc.austin.api.Mod
 import net.thesilkminer.mc.austin.api.Mojo
+import net.thesilkminer.mc.austin.api.MojoEventBus
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.AnnotationNode
@@ -46,6 +47,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
 
     private static final ClassNode BUS_ENUM = ClassHelper.make(EventBus)
     private static final ClassNode EVENT_BUS_INTERFACE = ClassHelper.make(IEventBus)
+    private static final ClassNode MOJO_EVENT_BUS = ClassHelper.make(MojoEventBus)
     private static final ClassNode MINECRAFT_FORGE = ClassHelper.make(MinecraftForge)
     private static final ClassNode MOJO_CONTAINER = ClassHelper.make(MojoContainer)
 
@@ -111,7 +113,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
     }
 
     private static void generateMojoBusGetter(final ClassNode owner) {
-        generateProperty(owner, MOJO_BUS, expressionFromBus(EventBus.MOJO))
+        generateProperty(owner, MOJO_BUS, expressionFromBus(EventBus.MOJO), MOJO_EVENT_BUS)
     }
 
     private static void generateForgeBusGetter(final ClassNode owner) {
@@ -120,10 +122,10 @@ final class MojoAstTransform extends AbstractASTTransformation {
 
     private static void generateModBusGetter(final ClassNode owner) {
         // redirect to this.mojoBus
-        generateProperty(owner, 'modBus', GeneralUtils.thisPropX(false, MOJO_BUS))
+        generateProperty(owner, 'modBus', GeneralUtils.thisPropX(false, MOJO_BUS), MOJO_EVENT_BUS)
     }
 
-    private static void generateProperty(final ClassNode owner, final String name, final Expression getter) {
+    private static void generateProperty(final ClassNode owner, final String name, final Expression getter, final ClassNode returnType = EVENT_BUS_INTERFACE) {
         if (owner.getProperty(name) || owner.getDeclaredField(name)) return
 
         final String methodName = "get${name.capitalize()}"
@@ -131,7 +133,7 @@ final class MojoAstTransform extends AbstractASTTransformation {
         if (owner.getDeclaredMethod(methodName, Parameter.EMPTY_ARRAY)) return
 
         final Statement getterCode = GeneralUtils.block(GeneralUtils.returnS(getter))
-        final MethodNode node = owner.addSyntheticMethod(methodName, 0x11, EVENT_BUS_INTERFACE, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterCode)
+        final MethodNode node = owner.addSyntheticMethod(methodName, 0x11, returnType, Parameter.EMPTY_ARRAY, ClassNode.EMPTY_ARRAY, getterCode)
         node.addAnnotation(GENERATED_ANNOTATION_NODE)
     }
 

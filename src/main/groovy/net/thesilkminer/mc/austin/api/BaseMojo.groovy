@@ -16,11 +16,11 @@ import net.minecraftforge.eventbus.api.IEventBus
  */
 @CompileStatic
 interface BaseMojo {
-    default IEventBus getModBus() {
+    default MojoEventBus getModBus() {
         throw new IllegalStateException('@Mojo/@Mod Transformer failed injection')
     }
 
-    default IEventBus getMojoBus() {
+    default MojoEventBus getMojoBus() {
         throw new IllegalStateException('@Mojo/@Mod Transformer failed injection')
     }
 

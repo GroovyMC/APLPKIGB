@@ -10,7 +10,6 @@ import net.minecraft.client.Minecraft
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
-import net.thesilkminer.mc.austin.api.Environment
 import net.thesilkminer.mc.austin.api.EventBus
 import net.thesilkminer.mc.austin.api.EventBusSubscriber
 import org.apache.logging.log4j.LogManager

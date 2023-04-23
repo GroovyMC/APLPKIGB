@@ -25,6 +25,11 @@ class AustinPowerfulMojoTest implements BaseMojo {
             LOGGER.info('Successfully received client event {} on mojoBus using @CompileStatic addListener', event)
             LOGGER.info SV(GroovySystem.version)
         }
+
+        modBus.onCommonSetup {
+            LOGGER.info "Hello from modBus.onCommonSetup { ${it.class.simpleName} it -> ... }"
+        }
+
         this.modBus.addListener(this.&methodBorrowing) // note: needs to be `this.&methodName` - not `this::methodName`
     }
 

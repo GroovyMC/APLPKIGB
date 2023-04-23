@@ -8,11 +8,11 @@ import com.matyrobbrt.enhancedgroovy.dsl.ClassTransformer
 
 ((ClassTransformer) this.transformer).tap {
     addField name: 'mojoBus',
-             type: 'net.minecraftforge.eventbus.api.IEventBus',
+             type: 'net.thesilkminer.mc.austin.api.MojoEventBus',
              modifiers: ['private', 'final']
 
     addField name: 'modBus',
-             type: 'net.minecraftforge.eventbus.api.IEventBus',
+             type: 'net.thesilkminer.mc.austin.api.MojoEventBus',
              modifiers: ['private', 'final']
 
     addField name: 'forgeBus',
@@ -20,11 +20,11 @@ import com.matyrobbrt.enhancedgroovy.dsl.ClassTransformer
              modifiers: ['private', 'final']
 
     addMethod name: 'getMojoBus',
-              returnType: 'net.minecraftforge.eventbus.api.IEventBus',
+              returnType: 'net.thesilkminer.mc.austin.api.MojoEventBus',
               modifiers: ['private', 'final']
 
     addMethod name: 'getModBus',
-              returnType: 'net.minecraftforge.eventbus.api.IEventBus',
+              returnType: 'net.thesilkminer.mc.austin.api.MojoEventBus',
               modifiers: ['private', 'final']
 
     addMethod name: 'getForgeBus',

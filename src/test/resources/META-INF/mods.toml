@@ -6,7 +6,7 @@ showAsResourcePack=false
 
 [[mods]]
 modId="mojotest"
-version="1.1.0"
+version="1.2.0"
 displayName="Austin's Powerful Language Provider: Keeping It Groovy Baby"
 authors="TheSilkMiner, Paint_Ninja"
 description='''

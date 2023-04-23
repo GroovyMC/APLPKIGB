@@ -105,7 +105,7 @@ final Map<String, String> groovy(final String name) {
     ]
 }
 
-version = '1.1.0'
+version = '1.2.0'
 group = 'net.thesilkminer.mc.austin'
 archivesBaseName = 'austin-powerful-language-provider-keeping-it-groovy-baby'
 
@@ -118,6 +118,10 @@ license {
     header = project.file('LICENSE-header.txt')
     ext['year'] = Calendar.instance.get(Calendar.YEAR)
 }
+
+//sourceSets {
+//    mod
+//}
 
 minecraft {
     mappings channel: 'official', version: '1.18.2'
@@ -138,6 +142,9 @@ minecraft {
                 mojotest {
                     source sourceSets.test
                 }
+//                mod {
+//                    source sourceSets.mod
+//                }
             }
         }
 
@@ -182,6 +189,8 @@ dependencies {
     groovyLibs.yeet.each { final String dep -> yeet groovy(dep) }
 
     compileOnly 'com.matyrobbrt.enhancedgroovy:dsl:0.2.0'
+
+    //modCompileOnly sourceSets.main.output
 }
 
 tasks.named('jar', Jar).configure {

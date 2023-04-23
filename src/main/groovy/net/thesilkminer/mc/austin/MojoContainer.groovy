@@ -9,7 +9,6 @@ import groovy.transform.CompileStatic
 import net.minecraftforge.eventbus.EventBusErrorMessage
 import net.minecraftforge.eventbus.api.BusBuilder
 import net.minecraftforge.eventbus.api.Event
-import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.fml.Logging
 import net.minecraftforge.fml.ModContainer
 import net.minecraftforge.fml.ModLoadingException
@@ -18,10 +17,12 @@ import net.minecraftforge.fml.config.IConfigEvent
 import net.minecraftforge.fml.event.IModBusEvent
 import net.minecraftforge.forgespi.language.IModInfo
 import net.minecraftforge.forgespi.language.ModFileScanData
+import net.thesilkminer.mc.austin.api.MojoEventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.util.function.Consumer
+import java.util.function.Supplier
 
 @CompileStatic
 final class MojoContainer extends ModContainer {
@@ -31,7 +32,7 @@ final class MojoContainer extends ModContainer {
 
     private static final Logger LOGGER = LogManager.getLogger(MojoContainer)
 
-    final IEventBus mojoBus
+    final MojoEventBus mojoBus
 
     private final ModFileScanData scanData
     @SuppressWarnings('GrFinalVariableAccess') private final Class<?> mojoClass // It was initialized, Groovy
@@ -43,15 +44,15 @@ final class MojoContainer extends ModContainer {
         LOGGER.debug(Logging.LOADING,'Creating Mojo container for {} on classloader {} with layer {}', className, this.class.classLoader, layer)
 
         this.scanData = scanData
-        this.mojoBus = BusBuilder.builder()
+        this.mojoBus = new MojoEventBus(BusBuilder.builder()
                 .setExceptionHandler {bus, event, listeners, i, cause -> LOGGER.error(new EventBusErrorMessage(event, i, listeners, cause)) }
                 .setTrackPhases(false) // What does this even do?
                 .markerType(IModBusEvent)
-                .build()
+                .build())
 
         this.activityMap[ModLoadingStage.CONSTRUCT] = this.&constructMojo
         this.configHandler = Optional.of(this.&postConfigEvent as Consumer<IConfigEvent>)
-        this.contextExtension = { null } // Oh yes, lambdas...
+        this.contextExtension = { null } as Supplier<?> // Oh yes, lambdas...
 
         try {
             final module = layer.findModule(info.owningFile.moduleName()).orElseThrow()
